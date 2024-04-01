@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="chat-messages"></div>
+    <input type="text" id="message-input" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+
+        // Connect to the WebSocket server
+        const socket = new WebSocket('ws://localhost:8765');
+
+        // Function to add a message to the chat
+        function addMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.innerText = message;
+            chatMessages.appendChild(messageElement);
+        }
+
+        // Function to send a message to the server
+        function sendMessage() {
+            const message = messageInput.value;
+            if (message.trim() !== '') {
+                socket.send(message);
+                messageInput.value = '';
+            }
+        }
+
+        // Event listener for incoming messages from the server
+        socket.addEventListener('message', function (event) {
+            addMessage(event.data);
+        });
+    </script>
+</body>
+</html>
